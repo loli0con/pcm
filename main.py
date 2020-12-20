@@ -19,7 +19,7 @@ def time_cost(fun):
               str(kwargs.get("n")) + "个产品，由" +
               str(kwargs.get("c_n")) + "个消费者处理"
               , end=",")
-        print("耗时为" + str(e - s))
+        print("耗时为" + str(e - s) + "秒")
         return result
 
     return wrapper
