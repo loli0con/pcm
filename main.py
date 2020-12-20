@@ -16,7 +16,7 @@ def time_cost(fun):
         result = fun(*args, **kwargs)
         e = time.time()
         print(str(kwargs.get("p_n")) + "生产者,生产" +
-              str(kwargs.get("n")) + "个产品，由" +
+              str(kwargs.get("n")) + "个产品,由" +
               str(kwargs.get("c_n")) + "个消费者处理"
               , end=",")
         print("耗时为" + str(e - s) + "秒")
