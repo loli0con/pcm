@@ -13,7 +13,8 @@ def time_cost(fun):
         s = time.time()
         result = fun(*args, **kwargs)
         e = time.time()
-        print(str(args[0].producer_number) + "生产者,生产" +
+        print("使用" + str(args[0].queue_type) + "," +
+              str(args[0].producer_number) + "个生产者,生产" +
               str(args[0].product_number) + "个产品,由" +
               str(args[0].consumer_number) + "个消费者处理"
               , end=",")
@@ -36,15 +37,15 @@ class Main:
         self._produce_function = produce_function
         self._consumer_function = consumer_function
         self.product_number = product_number
-        self._queue_type = queue_type
-        self._queue_argument = queue_argument
+        self.queue_type = queue_type
+        self._queue_argument = queue_argument or {}
 
         self._shared_queue = None
         self._producers = list()
         self._consumers = list()
 
     def create_queue(self):
-        self._shared_queue = public_function.get_queue(self._queue_type, **self._queue_argument)
+        self._shared_queue = public_function.get_queue(self.queue_type, **self._queue_argument)
 
     def create_producer(self):
         leave_number = self.product_number
@@ -99,5 +100,11 @@ class Main:
 
 
 if __name__ == '__main__':
-    m = Main(queue_type="redis_queue", queue_argument={"host": os.getenv("REDIS_HOST")})
-    m.run()
+    m1 = Main(queue_type="redis_queue",
+              queue_argument={"host": os.getenv("REDIS_HOST")},
+              product_number=200)
+    m1.run()
+
+    m2 = Main(queue_type="process_queue",
+              product_number=200)
+    m2.run()
