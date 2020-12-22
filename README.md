@@ -23,3 +23,11 @@
 信号量，表示生产是否已经结束  
 进程锁，保证信号量的安全  
 进程队列，来自标准库
+
+### 参考资料
+https://www.runoob.com/redis/redis-tutorial.html
+https://www.runoob.com/w3cnote/python-redis-intro.html
+https://cloud.tencent.com/developer/article/1151834
+https://blog.csdn.net/xuelians/article/details/79999275
+https://python-cookbook-3rd-edition.readthedocs.io/zh_CN/latest/c05/p21_serializing_python_objects.html
+https://blog.csdn.net/weixin_41935140/article/details/81153611
