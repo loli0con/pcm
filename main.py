@@ -3,10 +3,8 @@ from functools import wraps
 import public_function
 from consumer import Consumer
 from producer import Producer
-from my_queue import MyQueue
-import multiprocessing
 import time
-from multiprocessing import get_context
+import os
 
 
 def time_cost(fun):
@@ -15,9 +13,9 @@ def time_cost(fun):
         s = time.time()
         result = fun(*args, **kwargs)
         e = time.time()
-        print(str(kwargs.get("p_n")) + "生产者,生产" +
-              str(kwargs.get("n")) + "个产品,由" +
-              str(kwargs.get("c_n")) + "个消费者处理"
+        print(str(args[0].producer_number) + "生产者,生产" +
+              str(args[0].product_number) + "个产品,由" +
+              str(args[0].consumer_number) + "个消费者处理"
               , end=",")
         print("耗时为" + str(e - s) + "秒")
         return result
@@ -25,40 +23,81 @@ def time_cost(fun):
     return wrapper
 
 
-@time_cost
-def main(p_n=2, c_n=4, n=1_000_000):
-    # 初始化进程队列
-    shared_queue = MyQueue(ctx=get_context())
+class Main:
+    def __init__(self,
+                 producer_number=2, consumer_number=4, product_number=100,
+                 produce_function=public_function.random_number,
+                 consumer_function=public_function.is_prime,
+                 queue_type="process_queue",
+                 queue_argument: dict = None,
+                 ):
+        self.producer_number = producer_number
+        self.consumer_number = consumer_number
+        self._produce_function = produce_function
+        self._consumer_function = consumer_function
+        self.product_number = product_number
+        self._queue_type = queue_type
+        self._queue_argument = queue_argument
 
-    # 初始化生产者
-    producers = list()
-    for i in range(p_n):
-        p = Producer(n // p_n, public_function.random_number, shared_queue)
-        producers.append(p)
+        self._shared_queue = None
+        self._producers = list()
+        self._consumers = list()
 
-    # 初始化消费者
-    consumers = list()
-    for i in range(c_n):
-        c = Consumer(public_function.is_prime, shared_queue)
-        consumers.append(c)
+    def create_queue(self):
+        self._shared_queue = public_function.get_queue(self._queue_type, **self._queue_argument)
 
-    # 启动所有进程
-    for p in (producers + consumers):
-        p.start()
+    def create_producer(self):
+        leave_number = self.product_number
+        do_every_time = self.product_number // self.producer_number
 
-    # 等待生产完成
-    for p in producers:
-        p.join()
+        for i in range(self.producer_number - 1):
+            p = Producer(produce_amount=do_every_time,
+                         produce_function=self._produce_function,
+                         export_queue=self._shared_queue)
+            leave_number -= do_every_time
+            self._producers.append(p)
 
-    # 标注生成过程已经完成
-    shared_queue.sentinel = 1
+        p = Producer(produce_amount=leave_number,
+                     produce_function=self._produce_function,
+                     export_queue=self._shared_queue)
+        self._producers.append(p)
 
-    # 等待消费完成
-    for c in consumers:
-        c.join()
+    def create_consumer(self):
+        for i in range(self.consumer_number):
+            c = Consumer(consume_function=self._consumer_function,
+                         import_queue=self._shared_queue)
+            self._consumers.append(c)
+
+    def start_producer(self):
+        for p in self._producers:
+            p.start()
+
+    def start_consumer(self):
+        for c in self._consumers:
+            c.start()
+
+    def wait_produce(self):
+        for p in self._producers:
+            p.join()
+        self._shared_queue.sentinel = 1
+
+    def wait_consumer(self):
+        for c in self._consumers:
+            c.join()
+
+    @time_cost
+    def run(self):
+        self.create_queue()
+        self.create_producer()
+        self.create_consumer()
+
+        self.start_producer()
+        self.start_consumer()
+
+        self.wait_produce()
+        self.wait_consumer()
 
 
 if __name__ == '__main__':
-    main(p_n=1, c_n=1, n=1_000_000)
-    main(p_n=1, c_n=2, n=1_000_000)
-    main(p_n=2, c_n=4, n=1_000_000)
+    m = Main(queue_type="redis_queue", queue_argument={"host": os.getenv("REDIS_HOST")})
+    m.run()

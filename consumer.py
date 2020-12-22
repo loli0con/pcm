@@ -15,6 +15,8 @@ class Consumer(multiprocessing.Process):
         while True:
             try:
                 product = self.import_queue.get(False)
+                if product is None:
+                    raise Empty
                 if self.consume_function(product):
                     # print(product, "is prime")
                     pass

@@ -1,5 +1,8 @@
 import math
 import random
+from process_queue import ProcessQueue
+from redis_queue import RedisQueue
+from multiprocessing import get_context
 
 
 def is_prime(num: int):
@@ -15,3 +18,16 @@ def is_prime(num: int):
 
 def random_number():
     return random.randint(2_000_000_000, 10_000_000_000)
+
+
+def get_queue(queue_type="process_queue", **kwargs):
+    _q = None
+    if queue_type == "process_queue":
+        kwargs.setdefault("ctx", get_context())
+        _q = ProcessQueue(**kwargs)
+    elif queue_type == "redis_queue":
+        _q = RedisQueue(**kwargs)
+    else:
+        raise BaseException("do not support this " + queue_type)
+
+    return _q

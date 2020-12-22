@@ -2,8 +2,8 @@ from multiprocessing import Lock, Value
 from multiprocessing.queues import Queue
 
 
-class MyQueue:
-    def __init__(self, ctx, sentinel=None):
+class ProcessQueue:
+    def __init__(self, ctx, sentinel=None, **kwargs):
         self._sentinel = sentinel or Value("b", 0)
         self.queue = Queue(ctx=ctx)
         self.lock = Lock()
