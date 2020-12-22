@@ -1,7 +1,7 @@
 # ProducerConsumerModel
 
 ### 运行结果
-
+###### (使用进程队列,即process_queue.py)
 ##### mac
 > intel i5-5257U, 8G RAM
 - 1生产者,生产1000000个产品,由1个消费者处理,耗时为246.39605402946472秒
