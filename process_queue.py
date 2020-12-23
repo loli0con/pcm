@@ -6,7 +6,8 @@ from abstract import AbstractQueue
 class ProcessQueue(AbstractQueue):
     def __init__(self, ctx, sentinel=None, **kwargs):
         self._sentinel = sentinel or Value("b", 0)
-        self.queue = Queue(ctx=ctx)
+        maxsize = kwargs.get("maxsize", 0)
+        self.queue = Queue(ctx=ctx, maxsize=maxsize)
         self.lock = Lock()
 
     def put(self, *args, **kwargs):

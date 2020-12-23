@@ -1,5 +1,12 @@
 # ProducerConsumerModel
 
+### 运行说明
+- 请安装redis库，可以运行requirement.py安装，也可以手动安装
+- 请自行配置好redis
+- 使用main.py函数运行程序
+- queue_type只支持redis_queue和process_queue
+- 使用redis_queue时，请参考[RedisQueue](redis_queue.py)的初始化方法，在queue_argument参数中传入redis的相关信息
+
 ### 运行结果
 ###### (使用进程队列,即process_queue.py)
 ##### mac
