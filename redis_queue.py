@@ -1,8 +1,9 @@
 import redis
 import os
+from abstract import AbstractQueue
 
 
-class RedisQueue:
+class RedisQueue(AbstractQueue):
     def __init__(self, host="localhost", port=6379,
                  db=0, password='foobared', decode_responses=True,
                  custom_name="xxy",

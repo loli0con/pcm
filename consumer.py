@@ -1,9 +1,10 @@
 import multiprocessing
 import time
 from queue import Empty
+from abstract import AbstractConsumer
 
 
-class Consumer(multiprocessing.Process):
+class Consumer(multiprocessing.Process, AbstractConsumer):
     def __init__(self, consume_function, import_queue, after_consume=None):
         super(Consumer, self).__init__()
         self.consume_function = consume_function

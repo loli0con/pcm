@@ -1,7 +1,8 @@
 import multiprocessing
+from abstract import AbstractProducer
 
 
-class Producer(multiprocessing.Process):
+class Producer(multiprocessing.Process, AbstractProducer):
     def __init__(self, produce_amount, produce_function, export_queue, after_produce=None):
         super(Producer, self).__init__()
         self.produce_amount = produce_amount
