@@ -28,14 +28,14 @@ class Main:
     def __init__(self,
                  producer_number=2, consumer_number=4, product_number=100,
                  produce_function=public_function.random_number,
-                 consumer_function=public_function.is_prime,
+                 consume_function=public_function.is_prime,
                  queue_type="process_queue",
                  queue_argument: dict = None,
                  ):
         self.producer_number = producer_number
         self.consumer_number = consumer_number
         self._produce_function = produce_function
-        self._consumer_function = consumer_function
+        self._consumer_function = consume_function
         self.product_number = product_number
         self.queue_type = queue_type
         self._queue_argument = queue_argument or {}
