@@ -1,27 +1,7 @@
-from functools import wraps
-
 import public_function
 from consumer import Consumer
 from producer import Producer
-import time
 import os
-
-
-def time_cost(fun):
-    @wraps(fun)
-    def wrapper(*args, **kwargs):
-        s = time.time()
-        result = fun(*args, **kwargs)
-        e = time.time()
-        print("使用" + str(args[0].queue_type) + "," +
-              str(args[0].producer_number) + "个生产者,生产" +
-              str(args[0].product_number) + "个产品,由" +
-              str(args[0].consumer_number) + "个消费者处理"
-              , end=",")
-        print("耗时为" + str(e - s) + "秒")
-        return result
-
-    return wrapper
 
 
 class Main:
@@ -82,11 +62,11 @@ class Main:
             p.join()
         self._shared_queue.sentinel = 1
 
-    def wait_consumer(self):
+    def wait_consume(self):
         for c in self._consumers:
             c.join()
 
-    @time_cost
+    @public_function.time_cost
     def run(self):
         self.create_queue()
         self.create_producer()
@@ -96,7 +76,7 @@ class Main:
         self.start_consumer()
 
         self.wait_produce()
-        self.wait_consumer()
+        self.wait_consume()
 
 
 if __name__ == '__main__':

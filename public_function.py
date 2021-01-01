@@ -3,6 +3,8 @@ import random
 from process_queue import ProcessQueue
 from redis_queue import RedisQueue
 from multiprocessing import get_context
+import time
+from functools import wraps
 
 
 def is_prime(num: int):
@@ -31,3 +33,20 @@ def get_queue(queue_type="process_queue", **kwargs):
         raise BaseException("do not support this " + queue_type)
 
     return _q
+
+
+def time_cost(fun):
+    @wraps(fun)
+    def wrapper(*args, **kwargs):
+        s = time.time()
+        result = fun(*args, **kwargs)
+        e = time.time()
+        print("使用" + str(args[0].queue_type) + "," +
+              str(args[0].producer_number) + "个生产者,生产" +
+              str(args[0].product_number) + "个产品,由" +
+              str(args[0].consumer_number) + "个消费者处理"
+              , end=",")
+        print("耗时为" + str(e - s) + "秒")
+        return result
+
+    return wrapper

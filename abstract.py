@@ -15,7 +15,7 @@ class AbstractConsumer(metaclass=ABCMeta):
 
 class AbstractQueue(metaclass=ABCMeta):
     @abstractmethod
-    def put(self):
+    def put(self, value):
         pass
 
     @abstractmethod
