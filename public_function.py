@@ -50,3 +50,21 @@ def time_cost(fun):
         return result
 
     return wrapper
+
+
+if __name__ == '__main__':
+    lst = []  # 缓冲队列
+
+    s = time.time()
+    for i in range(200000):
+        lst.append(random_number())  # 生产者调用的生产函数
+    e = time.time()
+    print("生产20w个随机数，耗时为" + str(e - s) + "秒")
+
+    print("序列长度：", len(lst))
+
+    s = time.time()
+    for i in range(200000):
+        is_prime(lst[i])  # 消费者调用的消费函数
+    e = time.time()
+    print("消费20w个随机数，判断是否为素数，耗时为" + str(e - s) + "秒")
